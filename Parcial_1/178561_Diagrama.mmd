@@ -1,0 +1,83 @@
+flowchart TD
+    %% ESTILOS DE MÓDULOS
+    classDef crm fill:#2ecc71,stroke:#27ae60,color:#fff
+    classDef sales fill:#f39c12,stroke:#d35400,color:#fff
+    classDef purch fill:#3498db,stroke:#2980b9,color:#fff
+    classDef inv fill:#7f8c8d,stroke:#34495e,color:#fff
+    classDef prod fill:#8e44ad,stroke:#2c3e50,color:#fff
+    classDef serv fill:#f1c40f,stroke:#f39c12,color:#333
+    classDef fin fill:#e74c3c,stroke:#c0392b,color:#fff
+
+    %% 1. CRM / SOCIOS DE NEGOCIO
+    subgraph CRM ["CRM / SRM"]
+        BP["Business Partner Master"]:::crm
+        Customer["Customer"]:::crm
+        Lead["Lead"]:::crm
+        Supplier["Supplier"]:::crm
+        Activities["Activities"]:::crm
+        Opportunity["Opportunity"]:::crm
+        Pricing["Pricing"]:::crm
+    end
+
+    %% 2. VENTAS
+    subgraph Sales ["Ventas (Sales)"]
+        SalesQuotation["Sales Quotation"]:::sales
+        SalesOrder["Sales Order"]:::sales
+        DeliveryNote["Delivery Note"]:::sales
+        ARInvoice["AR Invoice"]:::sales
+        IncomingPayments["Incoming Payments"]:::sales
+    end
+
+    %% 3. COMPRAS
+    subgraph Purchasing ["Compras (Purchasing)"]
+        PurchaseRequest["Purchase Request"]:::purch
+        PurchaseQuotation["Purchase Quotation"]:::purch
+        PurchaseOrder["Purchase Order"]:::purch
+        GoodsReceiptPO["Goods Receipt PO"]:::purch
+        APInvoice["AP Invoice"]:::purch
+        OutgoingPayments["Outgoing Payments"]:::purch
+    end
+
+    %% 4. INVENTARIO Y PRODUCCIÓN
+    subgraph InvProd ["Inventario y Producción"]
+        ItemMaster["Item Master"]:::inv
+        WarehouseMgmt["Warehouse Mgmt"]:::inv
+        BOM["Bill of Materials"]:::prod
+        MRP["MRP / Demand Planning"]:::prod
+        ProdOrder["Production Order"]:::prod
+        IssueToProd["Issue to Production"]:::prod
+        ReceiptFromProd["Receipt from Production"]:::prod
+    end
+
+    %% 5. SERVICIOS
+    subgraph Service ["Servicios"]
+        EquipmentCard["Customer Equipment Card"]:::serv
+        ServiceCall["Service Call"]:::serv
+        ServiceContract["Service Contract"]:::serv
+        ServiceBilling["Service Billing"]:::serv
+    end
+
+    %% 6. FINANZAS Y REPORTES
+    subgraph Finance ["Finanzas y Reportes"]
+        FinPostings["Financial Postings"]:::fin
+        JournalEntries["Journal Entries"]:::fin
+        CashMgmt["Cash Management"]:::fin
+        FinReporting["Financial Reporting"]:::fin
+    end
+
+    %% FLUJOS Y CONEXIONES
+    BP --> Customer & Lead & Supplier
+    Customer --> Activities
+    Lead & Customer --> Opportunity --> SalesQuotation
+    Pricing --> SalesQuotation & PurchaseOrder
+
+    SalesQuotation --> SalesOrder --> DeliveryNote --> ARInvoice --> IncomingPayments
+    Supplier --> PurchaseRequest --> PurchaseQuotation --> PurchaseOrder --> GoodsReceiptPO --> APInvoice --> OutgoingPayments
+
+    ItemMaster --> WarehouseMgmt --> SalesOrder & PurchaseOrder
+    BOM --> MRP --> ProdOrder --> IssueToProd --> ReceiptFromProd
+
+    Customer --> EquipmentCard --> ServiceCall --> ServiceContract --> ServiceBilling
+
+    DeliveryNote & GoodsReceiptPO & ARInvoice & APInvoice --> FinPostings --> JournalEntries
+    IncomingPayments & OutgoingPayments --> CashMgmt --> FinReporting
