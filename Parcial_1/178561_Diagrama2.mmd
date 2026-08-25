@@ -1,0 +1,19 @@
+flowchart TD
+    A["Orden de Venta Creada\n(Ej. 100 unidades)\nStock Comprometido = 100"] --> B["Primera Entrega Parcial\n(Ej. 60 unidades)\nStock Físico -60 | Comprometido -60"]
+    
+    B --> C{"Estado de la Orden de Venta:\nABIERTO (Open)\nSaldo Pendiente = 40 unidades"}
+    
+    %% Escenario 1
+    C -->|Escenario 1: Llega más stock| D["Segunda Entrega\n(40 unidades restantes)"]
+    D --> E["Cierre AUTOMÁTICO\nde la Orden de Venta"]
+    E --> F["Facturación (A/R Invoice)\ny Cobro (Incoming Payment)"]
+    
+    %% Escenario 2
+    C -->|Escenario 2: Sin material / Cliente cancela| G["Cierre MANUAL de la Orden\n(o cierre de línea)"]
+    G --> H["Se liberan las 40 unidades\ndel inventario Comprometido"]
+    H --> F
+    
+    %% Escenario 3
+    B -->|Escenario 3: Mercancía dañada en la entrega| I{"¿Se había emitido la\nFactura de Clientes?"}
+    I -->|No| J["Devolución de Clientes (Return)\nAjusta stock físico"]
+    I -->|Sí| K["Nota de Crédito (A/R Credit Memo)\nAjusta contabilidad y stock"]
